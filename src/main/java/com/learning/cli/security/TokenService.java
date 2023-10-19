@@ -2,27 +2,33 @@ package com.learning.cli.security;
 
 import com.learning.cli.model.CustomUserDetails;
 import com.nimbusds.jwt.SignedJWT;
+import lombok.extern.log4j.Log4j2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 
+@Log4j2
+@Component
 public class TokenService {
     private final JwtEncoder jwtEncoder;
+    private static final Logger logger = LoggerFactory.getLogger(TokenService.class);
 
     public TokenService(JwtEncoder jwtEncoder) {
-        super();
         this.jwtEncoder = jwtEncoder;
     }
 
-    public String generateAccessToken(CustomUserDetails usrDetails) {
+    public String generateAccessToken(CustomUserDetails userDetails) {
         Instant now = Instant.now();
-        String scope = usrDetails.getAuthorities().stream()
+        String scope = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
@@ -30,15 +36,15 @@ public class TokenService {
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(2, ChronoUnit.MINUTES))
-                .subject(usrDetails.getUsername())
+                .subject(userDetails.getUsername())
                 .claim("scope", scope)
                 .build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    public String generateRefreshToken(CustomUserDetails usrDetails) {
+    public String generateRefreshToken(CustomUserDetails userDetails) {
         Instant now = Instant.now();
-        String scope = usrDetails.getAuthorities().stream()
+        String scope = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
@@ -46,7 +52,7 @@ public class TokenService {
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(10, ChronoUnit.MINUTES))
-                .subject(usrDetails.getUsername())
+                .subject(userDetails.getUsername())
                 .claim("scope", scope)
                 .build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -57,8 +63,8 @@ public class TokenService {
             SignedJWT decodedJWT = SignedJWT.parse(token);
             return decodedJWT.getJWTClaimsSet().getSubject();
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error("Error parsing token: {}", e.getMessage());
+            throw new RuntimeException("Error parsing token");
         }
-        return null;
     }
 }

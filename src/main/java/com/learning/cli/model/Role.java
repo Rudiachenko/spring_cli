@@ -1,6 +1,5 @@
 package com.learning.cli.model;
 
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "roles")
 public class Role {
     @Id
-    private Long id;
+    private String id;
     private RoleName roleName;
 
     public Role(RoleName roleName) {

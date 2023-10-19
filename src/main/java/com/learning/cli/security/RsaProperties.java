@@ -4,54 +4,87 @@ import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
-import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
 
+/**
+ * This class represents the configuration properties for RSA keys used in the application.
+ * It loads RSA private and public keys from a keystore for security-related operations.
+ */
 @Component
-@ConfigurationProperties(prefix = "rsa")
 @Slf4j
 @Data
+@PropertySource({"classpath:application.properties"})
 public class RsaProperties {
-    private String modulus;
-    private String publicKey;
-    private String privateKey;
-    private RSAPublicKey publicKeyRsa;
-    private RSAPrivateKey privateKeyRsa;
+
+    @Value("${app.security.jwt.keystore-path}")
+    private String keyStorePath;
+
+    @Value("${app.security.jwt.keystore-password}")
+    private String keyStorePassword;
+
+    @Value("${app.security.jwt.key-alias}")
+    private String keyAlias;
+
+    @Value("${app.security.jwt.private-key-passphrase}")
+    private String privateKeyPassphrase;
+
+    private RSAPrivateKey rsaPrivateKey;
+    private RSAPublicKey rsaPublicKey;
 
     @PostConstruct
-    public void init() {
-        try {
-            publicKeyRsa = loadPublicKey(publicKey);
-        } catch (Exception e) {
-            log.error("It's impossible to load RSA public key", e);
-        }
-
-        try {
-            privateKeyRsa = loadPrivateKey(privateKey);
-        } catch (Exception e) {
-            log.error("It's impossible to load RSA private key", e);
-        }
+    public void initRSAKey() {
+        this.rsaPrivateKey = createPrivateKey();
+        this.rsaPublicKey = createPublicKey();
     }
 
-    private RSAPublicKey loadPublicKey(String publicKeyString) throws GeneralSecurityException {
-        byte[] data = Base64.getDecoder().decode(publicKeyString);
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
-        KeyFactory factory = KeyFactory.getInstance("RSA");
-        return (RSAPublicKey) factory.generatePublic(spec);
+    private RSAPrivateKey createPrivateKey() {
+        try {
+            Key key = createKeyStore().getKey(keyAlias, privateKeyPassphrase.toCharArray());
+            if (key instanceof RSAPrivateKey) {
+                return (RSAPrivateKey) key;
+            }
+        } catch (UnrecoverableKeyException | NoSuchAlgorithmException | KeyStoreException e) {
+            log.error("Unable to load private key from keystore: {}", keyStorePath, e);
+        }
+        throw new IllegalArgumentException("Unable to load private key");
     }
 
-    private RSAPrivateKey loadPrivateKey(String privateKeyString) throws GeneralSecurityException {
-        byte[] data = Base64.getDecoder().decode(privateKeyString);
-        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(data);
-        KeyFactory factory = KeyFactory.getInstance("RSA");
-        return (RSAPrivateKey) factory.generatePrivate(spec);
+    public RSAPublicKey createPublicKey() {
+        try {
+            Certificate certificate = createKeyStore().getCertificate(keyAlias);
+            PublicKey publicKey = certificate.getPublicKey();
+
+            if (publicKey instanceof RSAPublicKey) {
+                return (RSAPublicKey) publicKey;
+            }
+        } catch (KeyStoreException e) {
+            log.error("Unable to load private key from keystore: {}", keyStorePath, e);
+        }
+        throw new IllegalArgumentException("Unable to load RSA public key");
+    }
+
+    private KeyStore createKeyStore() {
+        try (InputStream resourceAsStream = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream(keyStorePath)) {
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(resourceAsStream, keyStorePassword.toCharArray());
+            return keyStore;
+        } catch (IOException | CertificateException | NoSuchAlgorithmException | KeyStoreException e) {
+            throw new IllegalArgumentException("Unable to load keystore", e);
+        }
     }
 }

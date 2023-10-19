@@ -31,7 +31,6 @@ public class BookDocumentServiceTest {
     @InjectMocks
     private BookDocumentServiceImpl bookService;
 
-
     @Test
     void shouldCreateBook() {
         Long bookId = 1L;

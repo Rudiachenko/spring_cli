@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        log.info("Getting user with email: " + username);
+        log.info("Getting user with username: " + username);
         Optional<User> user = getUser(username);
         if (user.isPresent()) {
             log.info(String.format("User with username: '%s' was got successfully", user.get().getUsername()));

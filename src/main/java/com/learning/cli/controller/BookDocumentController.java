@@ -29,22 +29,22 @@ public class BookDocumentController {
         return bookService.create(book);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<BookDocument> getAllBooks() {
         return bookService.getAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public BookDocument getBookById(@PathVariable long id) {
         return bookService.getById(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public BookDocument updateBook(@PathVariable long id, @RequestBody BookDocument updatedBook) {
         return bookService.updateBook(id, updatedBook);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public void deleteBook(@PathVariable long id) {
         bookService.delete(id);
     }

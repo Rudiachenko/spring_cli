@@ -67,7 +67,7 @@ public class BookDocumentRepositoryTest {
 
     @Test
     void shouldCreateBookDocument() {
-        BookDocument newBookDocument = new BookDocument(2L, "Sample Book", "John Doe", "Dolor sit amet\"");
+        BookDocument newBookDocument = new BookDocument(2L, "New Book", "John Doe", "Dolor sit amet\"");
 
         bookDocumentRepository.save(newBookDocument);
 
