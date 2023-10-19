@@ -5,20 +5,25 @@ import com.learning.cli.model.User;
 import com.learning.cli.security.AuthenticationService;
 import com.learning.cli.security.TokenService;
 import com.learning.cli.service.Impl.CustomUserDetailsService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 
+@Log4j2
 @RestController
 public class AuthController {
+    private static final String BEARER_PREFIX = "Bearer ";
     private final TokenService tokenService;
     private final AuthenticationManager authManager;
     private final CustomUserDetailsService userDetailsService;
@@ -42,27 +47,40 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(request.username, request.password);
-        authManager.authenticate(authenticationToken);
-
-        CustomUserDetails user = (CustomUserDetails) userDetailsService.loadUserByUsername(request.username);
-
-        return new LoginResponse("User with username = " + request.username + " successfully logined!",
-                tokenService.generateAccessToken(user), tokenService.generateRefreshToken(user));
+        try {
+            Authentication authenticate = authManager.authenticate(authenticationToken);
+            CustomUserDetails userDetails = (CustomUserDetails) authenticate.getPrincipal();
+            String generatedAccessToken = tokenService.generateAccessToken(userDetails);
+            String generatedRefreshToken = tokenService.generateRefreshToken(userDetails);
+            String successMessage = "User with username = " + request.username + " successfully logged in!";
+            log.info(successMessage);
+            return ResponseEntity.ok(new LoginResponse(successMessage, generatedAccessToken, generatedRefreshToken));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @GetMapping("/token/refresh")
-    public RefreshTokenResponse refreshToken(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-        String refreshToken = headerAuth.substring(7);
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestHeader("Authorization") String headerAuth) {
+        if (headerAuth == null || !headerAuth.startsWith(BEARER_PREFIX)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-        String username = tokenService.parseToken(refreshToken);
-        CustomUserDetails user = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
-
-        return new RefreshTokenResponse(tokenService.generateAccessToken(user),
-                tokenService.generateRefreshToken(user));
+        try {
+            String refreshToken = headerAuth.substring(BEARER_PREFIX.length());
+            String username = tokenService.parseToken(refreshToken);
+            CustomUserDetails user = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
+            RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(tokenService.generateAccessToken(user),
+                    tokenService.generateRefreshToken(user));
+            log.info("Token for user '{}' successfully refreshed", username);
+            return ResponseEntity.ok(refreshTokenResponse);
+        } catch (Exception e) {
+            log.error("Failed to refresh token", e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

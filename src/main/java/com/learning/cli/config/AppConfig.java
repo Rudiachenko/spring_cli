@@ -14,7 +14,6 @@ import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 @ComponentScan(basePackages = {
         "com.learning.cli.service",
         "com.learning.cli.security",
-        "com.learning.cli.validation",
         "com.learning.cli.repository",
 })
 public class AppConfig {

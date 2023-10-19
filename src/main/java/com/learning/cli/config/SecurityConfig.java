@@ -85,11 +85,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
+//                .formLogin()
+//                .loginProcessingUrl("/login")
+//                .and()
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/registration").permitAll()
-                        .requestMatchers("/login").permitAll()
+                                .requestMatchers("/login").permitAll()
+                                .requestMatchers("/token/**").permitAll()
 //                        .requestMatchers("/").permitAll()
-//                        .requestMatchers("/token/**").permitAll()
 //                        .requestMatchers("/admin").hasRole("ADMIN")
 //                        .requestMatchers("/user").hasRole("USER")
                                 .anyRequest().authenticated()

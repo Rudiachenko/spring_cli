@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Component
 public class TokenService {
     private final JwtEncoder jwtEncoder;
-    private static final Logger logger = LoggerFactory.getLogger(TokenService.class);
 
     public TokenService(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;

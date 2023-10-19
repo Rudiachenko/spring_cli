@@ -40,7 +40,7 @@ public class DatabaseInitializer {
         mongoTemplate.insert(adminRole, "roles");
 
         Set<Role> adminRoles = new HashSet<>(Arrays.asList(userRole, adminRole));
-        User adminUser = new User("admin@example.com", passwordEncoder.encode("password"), adminRoles);
+        User adminUser = new User("admin", passwordEncoder.encode("password"), adminRoles);
         mongoTemplate.insert(adminUser, "users");
     }
 }
