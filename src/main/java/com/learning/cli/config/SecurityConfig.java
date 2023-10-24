@@ -11,7 +11,6 @@ import com.nimbusds.jose.proc.SecurityContext;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -38,11 +37,6 @@ import java.security.interfaces.RSAPublicKey;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@ComponentScan(basePackages = {
-        "com.learning.cli.service",
-        "com.learning.cli.security",
-        "com.learning.cli.repository",
-})
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final RsaProperties rsaProperties;
@@ -85,16 +79,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-//                .formLogin()
-//                .loginProcessingUrl("/login")
-//                .and()
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/registration").permitAll()
                                 .requestMatchers("/login").permitAll()
                                 .requestMatchers("/token/**").permitAll()
-//                        .requestMatchers("/").permitAll()
-//                        .requestMatchers("/admin").hasRole("ADMIN")
-//                        .requestMatchers("/user").hasRole("USER")
+                                .requestMatchers("/api/books/all").permitAll()
+                                .requestMatchers("/api/books/all").permitAll()
+                                .requestMatchers("/api/books/get/**").permitAll()
+                                .requestMatchers("/api/books/update/**").hasAnyRole("ADMIN")
+                                .requestMatchers("/api/books/delete/**").hasAnyRole("ADMIN", "USER")
+                                .requestMatchers("/admin").permitAll()
+                                .requestMatchers("/user").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

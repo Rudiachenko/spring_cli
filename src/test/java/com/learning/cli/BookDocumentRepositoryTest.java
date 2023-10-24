@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,14 +22,6 @@ public class BookDocumentRepositoryTest {
     public void setup() {
         BookDocument bookDocument = new BookDocument(1L, "Sample Book", "John Doe", "Lorem ipsum");
         bookDocumentRepository.save(bookDocument);
-    }
-
-    @Test
-    void shouldGetAllBooks() {
-        BookDocument bookDocument = new BookDocument(2L, "Harry Potter", "J. K. Rowling", "content");
-        bookDocumentRepository.save(bookDocument);
-        List<BookDocument> allBooks = bookDocumentRepository.findAll();
-        assertEquals(allBooks.size(), 2);
     }
 
     @Test

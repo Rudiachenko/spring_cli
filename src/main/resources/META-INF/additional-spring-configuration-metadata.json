@@ -1,0 +1,39 @@
+{
+  "properties": [
+    {
+      "name": "spring.datasource.database",
+      "type": "java.lang.String",
+      "description": "The name of the database used by the Spring application."
+    },
+    {
+      "name": "spring.datasource.host",
+      "type": "java.lang.String",
+      "description": "The host address where the Spring application's database is located."
+    },
+    {
+      "name": "spring.datasource.port",
+      "type": "java.lang.String",
+      "description": "The port number on which the database server of the Spring application is running."
+    },
+    {
+      "name": "app.security.jwt.keystore-path",
+      "type": "java.lang.String",
+      "description": "The file path to the keystore used for JWT (JSON Web Token) security purposes."
+    },
+    {
+      "name": "app.security.jwt.keystore-password",
+      "type": "java.lang.String",
+      "description": "The password required to access the keystore for JWT authentication."
+    },
+    {
+      "name": "app.security.jwt.key-alias",
+      "type": "java.lang.String",
+      "description": "The alias representing a specific key within the keystore used for JWT authentication."
+    },
+    {
+      "name": "app.security.jwt.private-key-passphrase",
+      "type": "java.lang.String",
+      "description": "The passphrase for the private key used in JWT token generation and validation."
+    }
+  ]
+}

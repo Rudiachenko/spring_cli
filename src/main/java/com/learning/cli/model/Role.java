@@ -1,14 +1,10 @@
 package com.learning.cli.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Setter
-@Getter
-@ToString
+@Data
 @Document(collection = "roles")
 public class Role {
     @Id
