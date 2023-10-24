@@ -2,6 +2,8 @@ package com.learning.cli.service.db;
 
 import com.learning.cli.model.Role;
 import com.learning.cli.model.User;
+import com.learning.cli.service.RoleService;
+import com.learning.cli.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -17,11 +19,15 @@ import java.util.Set;
 public class DatabaseInitializer {
     private final MongoTemplate mongoTemplate;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
+    private final RoleService roleService;
 
     @Autowired
-    public DatabaseInitializer(MongoTemplate mongoTemplate, PasswordEncoder passwordEncoder) {
+    public DatabaseInitializer(MongoTemplate mongoTemplate, PasswordEncoder passwordEncoder, UserService userService, RoleService roleService) {
         this.mongoTemplate = mongoTemplate;
         this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
+        this.roleService = roleService;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -34,13 +40,12 @@ public class DatabaseInitializer {
     }
 
     private void addObjectsToDb() {
-        Role userRole = new Role(Role.RoleName.USER);
-        Role adminRole = new Role(Role.RoleName.ADMIN);
-        mongoTemplate.insert(userRole, "roles");
-        mongoTemplate.insert(adminRole, "roles");
+        Role userRole = roleService.addRole(new Role(Role.RoleName.USER));
+        Role adminRole = roleService.addRole(new Role(Role.RoleName.ADMIN));
 
         Set<Role> adminRoles = new HashSet<>(Arrays.asList(userRole, adminRole));
         User adminUser = new User("admin", passwordEncoder.encode("password"), adminRoles);
-        mongoTemplate.insert(adminUser, "users");
+        User user = userService.addUser(adminUser);
+//        mongoTemplate.insert(adminUser, "users");
     }
 }
