@@ -20,8 +20,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User addUser(User user) {
         User registeredUser = userRepository.insert(user);
-        log.info("User " + user.getUsername() + " successfully registered.");
+        log.info("User '{}' successfully registered.", user.getUsername());
         return registeredUser;
     }
-
 }
