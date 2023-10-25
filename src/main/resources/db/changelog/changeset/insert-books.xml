@@ -1,0 +1,38 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="2" author="Fedir">
+        <ext:insertMany collectionName="books">
+            <ext:documents>
+                [
+                    {
+                        "_id": "1",
+                        "bookName":"Don Quixote",
+                        "bookAuthor":"Miguel de Cervantes",
+                        "content":"A novel about a delusional Spanish nobleman who fancies himself a knight and sets out on numerous misadventures with his loyal squire, Sancho Panza.",
+                        "_class":"com.learning.cli.model.BookDocument"
+                    },
+                    {
+                        "_id": "2",
+                        "bookName":"A Tale of Two Cities",
+                        "bookAuthor": "Charles Dickens",
+                        "content": "Set in London and Paris before and during the French Revolution, this novel deals with themes of resurrection and transformation in a time of chaos.",
+                        "_class": "com.learning.cli.model.BookDocument"
+                    },
+                    {
+                        "_id": "3",
+                        "bookName":"The Little Prince",
+                        "bookAuthor": "Antoine de Saint-Exupéry",
+                        "content": "A poetic tale, with watercolor illustrations by the author, about a prince who travels from planet to planet and learns life's meaningful lessons.",
+                        "_class": "com.learning.cli.model.BookDocument"
+                    }
+                ]
+            </ext:documents>
+        </ext:insertMany>
+    </changeSet>
+</databaseChangeLog>

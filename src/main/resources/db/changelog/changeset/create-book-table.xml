@@ -1,0 +1,41 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="1" author="Fedir">
+        <ext:createCollection collectionName="books">
+            <ext:options>
+                {
+                    validator: {
+                        $jsonSchema: {
+                            bsonType: "object",
+                            required: ["bookName", "bookAuthor", "content"],
+                            properties: {
+                                bookName: {
+                                    bsonType: "string",
+                                    description: "'bookName' must be a string"
+                                },
+                                bookAuthor: {
+                                    bsonType: "string",
+                                    description: "'bookAuthor' must be a string"
+                                },
+                                content: {
+                                    bsonType: "string",
+                                    minimum: 10,
+                                    maximum: 500,
+                                    description: "'content' must be a string in [ 10, 500 ] and is required"
+                                }
+                            }
+                        }
+                    },
+                    validationAction: "error",
+                    validationLevel: "strict"
+                }
+            </ext:options>
+        </ext:createCollection>
+    </changeSet>
+</databaseChangeLog>
