@@ -29,7 +29,7 @@ public class BookDocumentServiceImpl implements BookDocumentService {
     }
 
     @Override
-    public BookDocument getById(Long bookId) {
+    public BookDocument getById(String bookId) {
         log.info("Getting book with id: " + bookId);
         Optional<BookDocument> bookDocument = bookDocumentRepository.findById(bookId);
         if (bookDocument.isPresent()) {
@@ -54,7 +54,7 @@ public class BookDocumentServiceImpl implements BookDocumentService {
     }
 
     @Override
-    public BookDocument updateBook(Long id, BookDocument updatedBook) {
+    public BookDocument updateBook(String id, BookDocument updatedBook) {
         log.info("Updating book with ID: " + id);
         BookDocument book = bookDocumentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid book ID: " + id));
@@ -66,7 +66,7 @@ public class BookDocumentServiceImpl implements BookDocumentService {
     }
 
     @Override
-    public void delete(Long bookId) {
+    public void delete(String bookId) {
         log.info("Deleting book with id " + bookId);
         bookDocumentRepository.deleteById(bookId);
     }

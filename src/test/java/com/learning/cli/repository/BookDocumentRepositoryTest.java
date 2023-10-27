@@ -22,7 +22,7 @@ public class BookDocumentRepositoryTest {
 
     @BeforeEach
     public void setup() {
-        BookDocument bookDocument = new BookDocument(1L, "Sample Book", "John Doe", "Lorem ipsum");
+        BookDocument bookDocument = new BookDocument("1", "Sample Book", "John Doe", "Lorem ipsum");
         bookDocumentRepository.save(bookDocument);
     }
 
@@ -33,24 +33,24 @@ public class BookDocumentRepositoryTest {
 
     @Test
     void shouldGetById() {
-        BookDocument bookDocument = new BookDocument(1L, "Harry Potter", "J. K. Rowling", "content");
+        BookDocument bookDocument = new BookDocument("1", "Harry Potter", "J. K. Rowling", "content");
         bookDocumentRepository.save(bookDocument);
-        BookDocument book = bookDocumentRepository.findById(1L).get();
+        BookDocument book = bookDocumentRepository.findById("1").get();
         assertNotNull(book);
 
-        assertEquals(book.getBookId(), 1L);
+        assertEquals(book.getId(), "1");
     }
 
     @Test
     void shouldUpdateBookDocument() {
-        Optional<BookDocument> bookDocumentOptional = bookDocumentRepository.findById(1L);
+        Optional<BookDocument> bookDocumentOptional = bookDocumentRepository.findById("1");
         Assertions.assertTrue(bookDocumentOptional.isPresent());
         BookDocument bookDocument = bookDocumentOptional.get();
 
         bookDocument.setBookName("Updated Book");
         bookDocumentRepository.save(bookDocument);
 
-        Optional<BookDocument> updatedBookDocumentOptional = bookDocumentRepository.findById(1L);
+        Optional<BookDocument> updatedBookDocumentOptional = bookDocumentRepository.findById("1");
         Assertions.assertTrue(updatedBookDocumentOptional.isPresent());
         BookDocument updatedBookDocument = updatedBookDocumentOptional.get();
         Assertions.assertEquals("Updated Book", updatedBookDocument.getBookName());
@@ -58,18 +58,18 @@ public class BookDocumentRepositoryTest {
 
     @Test
     void shouldDeleteBookDocument() {
-        bookDocumentRepository.deleteById(1L);
-        Optional<BookDocument> bookDocumentOptional = bookDocumentRepository.findById(1L);
+        bookDocumentRepository.deleteById("1");
+        Optional<BookDocument> bookDocumentOptional = bookDocumentRepository.findById("1");
         Assertions.assertFalse(bookDocumentOptional.isPresent());
     }
 
     @Test
     void shouldCreateBookDocument() {
-        BookDocument newBookDocument = new BookDocument(2L, "New Book", "John Doe", "Dolor sit amet\"");
+        BookDocument newBookDocument = new BookDocument("2", "New Book", "John Doe", "Dolor sit amet\"");
 
         bookDocumentRepository.save(newBookDocument);
 
-        Optional<BookDocument> createdBookDocumentOptional = bookDocumentRepository.findById(2L);
+        Optional<BookDocument> createdBookDocumentOptional = bookDocumentRepository.findById("2");
         Assertions.assertTrue(createdBookDocumentOptional.isPresent());
         BookDocument createdBookDocument = createdBookDocumentOptional.get();
         Assertions.assertEquals("New Book", createdBookDocument.getBookName());

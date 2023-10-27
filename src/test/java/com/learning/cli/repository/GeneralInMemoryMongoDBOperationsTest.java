@@ -136,7 +136,7 @@ public class GeneralInMemoryMongoDBOperationsTest {
     @Test
     public void shouldSaveBook() {
         // Create and insert book document
-        BookDocument book = new BookDocument(1L, "Test Book", "Test Author", "Test Content");
+        BookDocument book = new BookDocument("1", "Test Book", "Test Author", "Test Content");
         Document doc = convertToDocument(book);
         booksCollection.insertOne(doc);
 
@@ -149,7 +149,7 @@ public class GeneralInMemoryMongoDBOperationsTest {
     @Test
     public void shouldUpdateBook() {
         // Insert a book document first
-        BookDocument book = new BookDocument(1L, "Test Book", "Test Author", "Test Content");
+        BookDocument book = new BookDocument("1", "Test Book", "Test Author", "Test Content");
         Document doc = convertToDocument(book);
         booksCollection.insertOne(doc);
 
@@ -160,7 +160,7 @@ public class GeneralInMemoryMongoDBOperationsTest {
         book.setContent(newContent);
 
         // Update document in database
-        Bson filtered = new Document("_id", book.getBookId());
+        Bson filtered = new Document("_id", book.getId());
         Bson updated = new Document("$set", new Document("bookName", newBookName)
                 .append("content", newContent));
         booksCollection.updateOne(filtered, updated);
@@ -174,17 +174,18 @@ public class GeneralInMemoryMongoDBOperationsTest {
     @Test
     public void shouldDeleteBook() {
         // Insert a book document first
-        BookDocument book = new BookDocument(1L, "Test Book", "Test Author", "Test Content");
+        BookDocument book = new BookDocument("1", "Test Book", "Test Author", "Test Content");
         Document doc = convertToDocument(book);
         booksCollection.insertOne(doc);
 
         // Delete the document
-        Bson filtered = new Document("_id", book.getBookId());
+        Bson filtered = new Document("_id", book.getId());
         booksCollection.deleteOne(filtered);
 
         // Verify it's deleted
         assertThat(booksCollection.countDocuments()).isEqualTo(0);
     }
+
     private MongoConverter getMongoConverter() {
         // Create and return a MongoConverter
         MongoDatabaseFactory mongoDbFactory = new SimpleMongoClientDatabaseFactory(client, TEST_DB);
@@ -210,7 +211,7 @@ public class GeneralInMemoryMongoDBOperationsTest {
 
     private Document convertToDocument(BookDocument book) {
         // Convert and return BookDocument object to Document
-        return new Document("_id", book.getBookId())
+        return new Document("_id", book.getId())
                 .append("bookName", book.getBookName())
                 .append("bookAuthor", book.getBookAuthor())
                 .append("content", book.getContent());

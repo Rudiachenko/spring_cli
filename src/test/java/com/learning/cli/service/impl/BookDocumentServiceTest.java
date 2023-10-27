@@ -10,7 +10,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,13 +34,13 @@ public class BookDocumentServiceTest {
 
     @Test
     void shouldCreateBook() {
-        Long bookId = 1L;
+        String bookId = "1";
         BookDocument book = getBookDocument(bookId);
 
         when(bookRepository.save(book)).thenReturn(book);
         BookDocument createdBook = bookService.create(book);
 
-        assertEquals(book.getBookId(), createdBook.getBookId());
+        assertEquals(book.getId(), createdBook.getId());
         assertEquals(book.getBookName(), createdBook.getBookName());
         assertEquals(book.getBookAuthor(), createdBook.getBookAuthor());
         assertEquals(book.getContent(), createdBook.getContent());
@@ -51,7 +50,7 @@ public class BookDocumentServiceTest {
 
     @Test
     void shouldGetBookById() {
-        Long bookId = 1L;
+        String bookId = "1";
         BookDocument book = getBookDocument(bookId);
 
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
@@ -65,21 +64,22 @@ public class BookDocumentServiceTest {
 
     @Test
     void shouldThrowExceptionWhenGettingBook() {
-        Long bookId = 1L;
+        String bookId = "1";
         BookDocument book = getBookDocument(bookId);
 
-        when(bookRepository.findById(book.getBookId())).thenReturn(Optional.empty());
+        when(bookRepository.findById(book.getId())).thenReturn(Optional.empty());
 
         assertThrows(Exception.class, () -> bookService.updateBook(bookId, book));
-        verify(bookRepository, times(1)).findById(book.getBookId());
+        verify(bookRepository, times(1)).findById(book.getId());
     }
 
     @Test
     void shouldGetAllBooks() {
-        Long bookId1 = 1L;
+        String bookId1 = "1";
+
         BookDocument book1 = getBookDocument(bookId1);
 
-        Long bookId2 = 2L;
+        String bookId2 = "2";
         BookDocument book2 = getBookDocument(bookId2);
 
         List<BookDocument> books = Arrays.asList(book1, book2);
@@ -94,7 +94,7 @@ public class BookDocumentServiceTest {
 
     @Test
     void shouldUpdateBook() {
-        Long bookId = 1L;
+        String bookId = "1";
         BookDocument existingBook = getBookDocument(bookId);
 
         BookDocument updatedBook = getBookDocument(bookId);
@@ -109,7 +109,7 @@ public class BookDocumentServiceTest {
         verify(bookRepository, times(1)).save(bookCaptor.capture());
 
         BookDocument capturedBook = bookCaptor.getValue();
-        assertEquals(bookId, capturedBook.getBookId());
+        assertEquals(bookId, capturedBook.getId());
         assertEquals(updatedBook.getBookName(), capturedBook.getBookName());
         assertEquals(updatedBook.getBookAuthor(), capturedBook.getBookAuthor());
         assertEquals(updatedBook.getContent(), capturedBook.getContent());
@@ -117,29 +117,29 @@ public class BookDocumentServiceTest {
 
     @Test
     void shouldThrowExceptionWhenUpdatingBook() {
-        Long bookId = 1L;
+        String bookId = "1";
         BookDocument book = getBookDocument(bookId);
 
-        when(bookRepository.findById(book.getBookId())).thenReturn(Optional.empty());
+        when(bookRepository.findById(book.getId())).thenReturn(Optional.empty());
 
         assertThrows(Exception.class, () -> bookService.updateBook(bookId, book));
 
-        verify(bookRepository, times(1)).findById(book.getBookId());
+        verify(bookRepository, times(1)).findById(book.getId());
         verify(bookRepository, times(0)).save(book);
     }
 
     @Test
     void shouldDeleteBook() {
-        Long bookId = 1L;
+        String bookId = "1";
 
         bookService.delete(bookId);
 
         verify(bookRepository, times(1)).deleteById(bookId);
     }
 
-    private BookDocument getBookDocument(Long bookId) {
+    private BookDocument getBookDocument(String bookId) {
         BookDocument book = new BookDocument();
-        book.setBookId(bookId);
+        book.setId(bookId);
         book.setBookName("Book " + bookId);
         book.setBookAuthor("Author " + bookId);
         book.setContent("Content " + bookId);

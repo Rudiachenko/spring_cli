@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "books")
 public class BookDocument {
     @Id
-    private Long bookId;
+    private String id;
     private String bookName;
     private String bookAuthor;
     private String content;

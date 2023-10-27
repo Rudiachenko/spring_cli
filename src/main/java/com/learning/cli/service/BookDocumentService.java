@@ -7,11 +7,11 @@ import java.util.List;
 public interface BookDocumentService {
     BookDocument create(BookDocument bookDocument);
 
-    BookDocument getById(Long id);
+    BookDocument getById(String id);
 
     List<BookDocument> getAll();
 
-    BookDocument updateBook(Long id, BookDocument updatedBook);
+    BookDocument updateBook(String id, BookDocument updatedBook);
 
-    void delete(Long bookId);
+    void delete(String bookId);
 }
