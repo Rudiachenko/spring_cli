@@ -10,7 +10,6 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 @SpringBootTest
 @ExtendWith(OutputCaptureExtension.class)
 class ApplicationTests {

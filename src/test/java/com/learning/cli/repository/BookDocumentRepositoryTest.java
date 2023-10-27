@@ -1,18 +1,20 @@
-package com.learning.cli;
+package com.learning.cli.repository;
 
 import com.learning.cli.model.BookDocument;
-import com.learning.cli.repository.BookDocumentRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@ActiveProfiles("test")
 @DataMongoTest
 public class BookDocumentRepositoryTest {
     @Autowired
@@ -22,6 +24,11 @@ public class BookDocumentRepositoryTest {
     public void setup() {
         BookDocument bookDocument = new BookDocument(1L, "Sample Book", "John Doe", "Lorem ipsum");
         bookDocumentRepository.save(bookDocument);
+    }
+
+    @AfterEach
+    void tearDown() {
+        bookDocumentRepository.deleteAll();
     }
 
     @Test

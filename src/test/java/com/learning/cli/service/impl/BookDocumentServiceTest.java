@@ -1,13 +1,15 @@
-package com.learning.cli;
+package com.learning.cli.service.impl;
 
 import com.learning.cli.model.BookDocument;
 import com.learning.cli.repository.BookDocumentRepository;
 import com.learning.cli.service.Impl.BookDocumentServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
 import java.util.Arrays;
@@ -22,7 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DataMongoTest
+@ExtendWith(MockitoExtension.class)
 public class BookDocumentServiceTest {
     @Captor
     private ArgumentCaptor<BookDocument> bookCaptor;
@@ -129,8 +131,6 @@ public class BookDocumentServiceTest {
     @Test
     void shouldDeleteBook() {
         Long bookId = 1L;
-
-        when(bookRepository.findById(bookId)).thenReturn(Optional.of(new BookDocument()));
 
         bookService.delete(bookId);
 
