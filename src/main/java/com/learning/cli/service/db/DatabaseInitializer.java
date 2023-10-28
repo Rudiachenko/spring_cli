@@ -60,9 +60,10 @@ public class DatabaseInitializer {
         Role userRole = roleService.addRole(new Role(Role.RoleName.USER));
         Role adminRole = roleService.addRole(new Role(Role.RoleName.ADMIN));
 
-        Set<Role> adminRoles = new HashSet<>(Arrays.asList(userRole, adminRole));
-        User adminUser = new User("admin", passwordEncoder.encode("password"), adminRoles);
-        userService.addUser(adminUser);
+        User admin = new User("admin", passwordEncoder.encode("password"), Set.of(userRole, adminRole));
+        User user = new User("user", passwordEncoder.encode("password"), Set.of(userRole));
+        userService.addUser(admin);
+        userService.addUser(user);
     }
 
     private void addTablesByLiquibase() {

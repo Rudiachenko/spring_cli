@@ -1,5 +1,6 @@
 package com.learning.cli.config;
 
+import com.learning.cli.security.CustomAccessDeniedHandler;
 import com.learning.cli.security.RsaProperties;
 import com.learning.cli.service.Impl.CustomUserDetailsService;
 import com.nimbusds.jose.jwk.JWK;
@@ -20,7 +21,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +29,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.security.interfaces.RSAPublicKey;
@@ -38,13 +40,16 @@ import java.security.interfaces.RSAPublicKey;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    private static final String AUTHORITIES_PREFIX = "ROLE_";
     private final UserDetailsService userDetailsService;
     private final RsaProperties rsaProperties;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     @Autowired
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService, RsaProperties rsaProperties) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, RsaProperties rsaProperties, CustomAccessDeniedHandler accessDeniedHandler) {
         this.userDetailsService = customUserDetailsService;
         this.rsaProperties = rsaProperties;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -76,25 +81,40 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthoritiesClaimName("scope");
+        authoritiesConverter.setAuthorityPrefix(AUTHORITIES_PREFIX);
+
+        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
+        jwtConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+
+        return jwtConverter;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/registration").permitAll()
-                                .requestMatchers("/login").permitAll()
-                                .requestMatchers("/token/**").permitAll()
-                                .requestMatchers("/api/books/all").permitAll()
-                                .requestMatchers("/api/books/all").permitAll()
-                                .requestMatchers("/api/books/get/**").permitAll()
-                                .requestMatchers("/api/books/update/**").hasAnyRole("ADMIN")
-                                .requestMatchers("/api/books/delete/**").hasAnyRole("ADMIN", "USER")
-                                .requestMatchers("/admin").permitAll()
-                                .requestMatchers("/user").permitAll()
-                                .anyRequest().authenticated()
+                        .requestMatchers("/registration").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/token/**").permitAll()
+                        .requestMatchers("/api/books/all").permitAll()
+                        .requestMatchers("/api/books/get/**").permitAll()
+                        .requestMatchers("/api/books/update/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/books/delete/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/admin").hasAnyRole("ADMIN")
+                        .requestMatchers("/user").hasAnyRole("USER")
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
                 .httpBasic(Customizer.withDefaults())
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler)
+                .and()
                 .build();
     }
 }

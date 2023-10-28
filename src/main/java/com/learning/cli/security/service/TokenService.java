@@ -1,4 +1,4 @@
-package com.learning.cli.security;
+package com.learning.cli.security.service;
 
 import com.learning.cli.model.CustomUserDetails;
 import com.nimbusds.jwt.SignedJWT;
@@ -32,7 +32,7 @@ public class TokenService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plus(2, ChronoUnit.MINUTES))
+                .expiresAt(now.plus(60, ChronoUnit.MINUTES))
                 .subject(userDetails.getUsername())
                 .claim("scope", scope)
                 .build();
@@ -48,7 +48,7 @@ public class TokenService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plus(10, ChronoUnit.MINUTES))
+                .expiresAt(now.plus(60, ChronoUnit.MINUTES))
                 .subject(userDetails.getUsername())
                 .claim("scope", scope)
                 .build();

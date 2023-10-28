@@ -3,7 +3,7 @@ package com.learning.cli.controller;
 import com.learning.cli.model.CustomUserDetails;
 import com.learning.cli.model.User;
 import com.learning.cli.security.AuthenticationService;
-import com.learning.cli.security.TokenService;
+import com.learning.cli.security.service.TokenService;
 import com.learning.cli.service.Impl.CustomUserDetailsService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

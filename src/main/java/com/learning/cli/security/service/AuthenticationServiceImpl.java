@@ -1,9 +1,10 @@
-package com.learning.cli.security;
+package com.learning.cli.security.service;
 
 import com.learning.cli.model.Role;
 import com.learning.cli.model.User;
 import com.learning.cli.repository.RoleRepository;
 import com.learning.cli.repository.UserRepository;
+import com.learning.cli.security.AuthenticationService;
 import com.learning.cli.service.UserService;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.log4j.Log4j2;
