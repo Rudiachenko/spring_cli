@@ -69,5 +69,6 @@ public class BookDocumentServiceImpl implements BookDocumentService {
     public void delete(String bookId) {
         log.info("Deleting book with id " + bookId);
         bookDocumentRepository.deleteById(bookId);
+        log.info("Book with id " + bookId + " was successfully deleted");
     }
 }
