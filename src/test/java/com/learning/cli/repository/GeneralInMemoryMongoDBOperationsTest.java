@@ -149,7 +149,7 @@ public class GeneralInMemoryMongoDBOperationsTest {
     @Test
     public void shouldUpdateBook() {
         // Insert a book document first
-        BookDocument book = new BookDocument("1", "Test Book", "Test Author", "Test Content");
+        BookDocument book = new BookDocument("10", "Test Book", "Test Author", "Test Content");
         Document doc = convertToDocument(book);
         booksCollection.insertOne(doc);
 

@@ -24,16 +24,10 @@ public class UserServiceTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    private User user;
-
-    @BeforeEach
-    void setUp() {
-        user = new User();
-        user.setUsername("testUser");
-    }
-
     @Test
     void shouldAddUser() {
+        User user = new User();
+        user.setUsername("testUser");
         when(userRepository.insert(any(User.class))).thenReturn(user);
 
         User result = userService.addUser(user);
