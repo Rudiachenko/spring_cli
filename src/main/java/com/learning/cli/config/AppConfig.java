@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 @ComponentScan(basePackages = {
         "com.learning.cli.service",
         "com.learning.cli.security",
+        "com.learning.cli.health",
         "com.learning.cli.repository",
 })
 @Import({SecurityConfig.class, MongoDBConfig.class})

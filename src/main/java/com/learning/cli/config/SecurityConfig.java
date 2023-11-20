@@ -102,6 +102,7 @@ public class SecurityConfig {
                         .requestMatchers("/token/**").permitAll()
                         .requestMatchers("/api/books/all").permitAll()
                         .requestMatchers("/api/books/get/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/books/update/**").hasAnyRole("ADMIN")
                         .requestMatchers("/api/books/delete/**").hasAnyRole("ADMIN")
                         .requestMatchers("/admin").hasAnyRole("ADMIN")
