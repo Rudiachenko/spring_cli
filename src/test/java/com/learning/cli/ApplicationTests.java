@@ -2,26 +2,25 @@ package com.learning.cli;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ExtendWith(OutputCaptureExtension.class)
 class ApplicationTests {
-    @Autowired
-    private CommandLineRunner commandLineRunner;
+    @InjectMocks
+    private Application application;
 
     @Test
-    public void testCommandLineRunner(CapturedOutput output) throws Exception {
-        commandLineRunner.run();
+    public void testCommandLineRunner(CapturedOutput output) {
+        application.run();
 
         String expectedOutput = "Hello World";
-        String actualOutput = output.getOut().trim();
+        String actualOutput = output.getOut();
 
         assertTrue(actualOutput.contains(expectedOutput));
     }

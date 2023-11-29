@@ -1,4 +1,4 @@
-package com.learning.cli.service.impl;
+package com.learning.cli.service;
 
 import com.learning.cli.model.BookDocument;
 import com.learning.cli.repository.BookDocumentRepository;

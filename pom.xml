@@ -28,7 +28,7 @@
         <servlet-api.version>4.0.1</servlet-api.version>
         <junit.version>4.13.2</junit.version>
         <mongo-java-server.version>1.43.0</mongo-java-server.version>
-        <flapdoodle-embed-mongo.version>4.6.3</flapdoodle-embed-mongo.version>
+        <flapdoodle-embed-mongo.version>3.4.11</flapdoodle-embed-mongo.version>
         <hamcrest-library.version>2.2</hamcrest-library.version>
         <spring-boot-component.version>3.1.0</spring-boot-component.version>
         <spring-security-oauth2.version>2.6.8</spring-security-oauth2.version>
@@ -146,7 +146,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <version>${spring-security-config.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <!-- Servlet API -->
@@ -163,6 +162,13 @@
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Flapdoodle Embed Mongo -->
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <version>${flapdoodle-embed-mongo.version}</version>
         </dependency>
 
         <!-- Hamcrest Library -->
@@ -186,14 +192,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${commons-text.version}</version>
-        </dependency>
-
-        <!-- Flapdoodle Embed Mongo -->
-        <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>${flapdoodle-embed-mongo.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <!-- Mongo Java Server -->

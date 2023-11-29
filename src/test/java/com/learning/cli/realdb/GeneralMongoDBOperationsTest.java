@@ -1,4 +1,4 @@
-package com.learning.cli.repository;
+package com.learning.cli.realdb;
 
 import com.learning.cli.model.BookDocument;
 import com.learning.cli.model.Role;
@@ -12,9 +12,9 @@ import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
@@ -26,34 +26,32 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.util.TestSocketUtils.findAvailableTcpPort;
 
 /**
- * GeneralInMemoryMongoDBOperationsTest is a test class for demonstrating various operations
- * such as create, update, and delete on MongoDB collections in an in-memory database.
- * It uses an in-memory instance of MongoDB for testing purposes, allowing tests
- * to be run without the need for an actual MongoDB server.
- *
- * <p>This class covers operations for two collections: 'users' and 'books'.
- * It provides test methods for each CRUD operation on these collections.
- * The MongoDB instance is set up and torn down before and after each test method, respectively.</p>
+ * The {@code GeneralMongoDBOperationsTest} class is responsible for demonstrating and testing
+ * various MongoDB operations such as create, update, and delete in the 'users' and 'books' collections.
+ * <p>
+ * It manually sets up and tears down a MongoDB instance through code before and after each test method.
+ * This includes running a Mongo server manually, initializing the collections, and setting up MongoTemplate
+ * for database interactions.
  */
-public class GeneralInMemoryMongoDBOperationsTest {
+public class GeneralMongoDBOperationsTest {
     private static final String LOCAL_HOST = "localhost";
     private static final String UPDATE_OPERATION = "$set";
     private static final String TEST_DB = "testdb";
     private static final String USERS_COLLECTION = "users";
     private static final String BOOKS_COLLECTION = "books";
-    // if the server is already running on this port, choose another one.
-    private static final Integer PORT = 27018;
+    private static final Integer PORT = findAvailableTcpPort();
     private static MongoClient client;
     private static MongoServer server;
     private static MongoCollection<Document> userCollection;
     private static MongoCollection<Document> booksCollection;
     private static MongoTemplate mongoTemplate;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        // Setup in-memory Mongo server
+        // Setup Mongo server
         server = new MongoServer(new MemoryBackend());
         server.bind(LOCAL_HOST, PORT);
 
@@ -71,7 +69,7 @@ public class GeneralInMemoryMongoDBOperationsTest {
         mongoTemplate = new MongoTemplate(new SimpleMongoClientDatabaseFactory(client, TEST_DB), getMongoConverter());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         // Drop the collection, close the client and shutdown the server after each test
         userCollection.drop();

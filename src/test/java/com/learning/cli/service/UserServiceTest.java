@@ -1,9 +1,8 @@
-package com.learning.cli.service.impl;
+package com.learning.cli.service;
 
 import com.learning.cli.model.User;
 import com.learning.cli.repository.UserRepository;
 import com.learning.cli.service.Impl.UserServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

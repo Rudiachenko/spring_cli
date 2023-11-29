@@ -1,15 +1,18 @@
-package com.learning.cli.repository;
+package com.learning.cli.inmemory;
 
+import com.learning.cli.config.TestMongoDbConfig;
 import com.learning.cli.model.Role;
 import com.learning.cli.model.User;
+import com.learning.cli.repository.RoleRepository;
+import com.learning.cli.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 import java.util.Set;
@@ -18,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ActiveProfiles("test")
-@ExtendWith(MockitoExtension.class)
-@DataMongoTest
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@ContextConfiguration(classes = TestMongoDbConfig.class)
 public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
