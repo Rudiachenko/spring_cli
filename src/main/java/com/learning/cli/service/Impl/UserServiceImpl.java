@@ -7,6 +7,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Log4j2
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,5 +24,14 @@ public class UserServiceImpl implements UserService {
         User registeredUser = userRepository.insert(user);
         log.info("User '{}' successfully registered.", user.getUsername());
         return registeredUser;
+    }
+
+    @Override
+    public Optional<User> getUserByName(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            log.info("User '{}' successfully found.", user.get().getUsername());
+        }
+        return user;
     }
 }

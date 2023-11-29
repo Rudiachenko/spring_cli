@@ -20,14 +20,12 @@ import java.util.Set;
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final RoleRepository roleRepository;
     private final UserService userService;
-    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthenticationServiceImpl(RoleRepository roleRepository, UserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthenticationServiceImpl(RoleRepository roleRepository, UserService userService, PasswordEncoder passwordEncoder) {
         this.roleRepository = roleRepository;
         this.userService = userService;
-        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -53,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (StringUtils.isEmpty(username)) {
             log.warn("Username can't be null or empty");
             throw new IllegalArgumentException("Username can't be null or empty.");
-        } else if (userRepository.findByUsername(username).isPresent()) {
+        } else if (userService.getUserByName(username).isPresent()) {
             log.warn("User {} is already in use.", username);
             throw new IllegalArgumentException("User is already in use");
         }

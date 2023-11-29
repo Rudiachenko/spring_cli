@@ -3,6 +3,7 @@ package com.learning.cli.service.Impl;
 import com.learning.cli.model.CustomUserDetails;
 import com.learning.cli.model.User;
 import com.learning.cli.repository.UserRepository;
+import com.learning.cli.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,11 +16,11 @@ import java.util.Optional;
 @Log4j2
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public CustomUserDetailsService(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -35,6 +36,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private Optional<User> getUser(String username) {
-        return userRepository.findByUsername(username);
+        return userService.getUserByName(username);
     }
 }
